@@ -1,0 +1,21 @@
+# --- Datasets ---
+# Ignore the massive raw data folders
+eeg_data_temp/
+eeg+database/
+smni_eeg_data/
+
+# --- Python Junk ---
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# --- Environment & OS ---
+.env
+venv/
+.venv/
+.DS_Store
+Thumbs.db
+
+# --- Optional ---
+# If your cleaned CSV gets very large, uncomment the line below
+# processed_data/clean_eeg.csv
