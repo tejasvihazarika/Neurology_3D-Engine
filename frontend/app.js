@@ -8,8 +8,8 @@ const BAND_COLORS = { Delta:'#6366F1', Theta:'#0891B2', Alpha:'#059669', Beta:'#
 const lightLayout = (extra={}) => ({
     margin:{t:25,l:50,r:20,b:40}, paper_bgcolor:'transparent', plot_bgcolor:'transparent',
     font:{color:'#6B7280',family:'Inter',size:12},
-    xaxis:{gridcolor:'#F3F4F6',zerolinecolor:'#E5E7EB',...extra.xaxis},
-    yaxis:{gridcolor:'#F3F4F6',zerolinecolor:'#E5E7EB',...extra.yaxis}, ...extra
+    xaxis:{gridcolor:'#F3F4F6',zerolinecolor:'#E5E7EB',fixedrange:true,...extra.xaxis},
+    yaxis:{gridcolor:'#F3F4F6',zerolinecolor:'#E5E7EB',fixedrange:true,...extra.yaxis}, ...extra
 });
 const pCfg = {responsive:true,displayModeBar:false};
 
@@ -150,15 +150,17 @@ function initBrain3D(){
                 else if(normY>0.5){intensity=ri.Parietal;region='Parietal';}
                 else{intensity=ri.Temporal;region='Temporal';}
 
-                // Warm-cool: blue(low) → green(mid) → orange(high) → red(very high)
+                // Accurate Blue -> Purple -> Red gradient matching legend
                 const c=new THREE.Color();
-                if(intensity<0.4) c.setRGB(0.35+intensity,0.55+intensity*0.5,0.9-intensity);
-                else if(intensity<0.7) c.setRGB(0.2+intensity*0.8,0.75-intensity*0.2,0.3);
-                else c.setRGB(0.9,0.35-intensity*0.15,0.15+intensity*0.1);
+                const colorLow=new THREE.Color('#2563EB');
+                const colorMid=new THREE.Color('#A78BFA');
+                const colorHigh=new THREE.Color('#DC2626');
+                if (intensity < 0.5) c.lerpColors(colorLow, colorMid, intensity * 2);
+                else c.lerpColors(colorMid, colorHigh, (intensity - 0.5) * 2);
                 colors[i*3]=c.r; colors[i*3+1]=c.g; colors[i*3+2]=c.b;
             }
             geo.setAttribute('color',new THREE.BufferAttribute(colors,3));
-            child.material=new THREE.MeshStandardMaterial({vertexColors:true,metalness:0.05,roughness:0.65,transparent:true,opacity:0.93});
+            child.material=new THREE.MeshStandardMaterial({vertexColors:true,metalness:0.1,roughness:0.8,transparent:false,opacity:1});
         });
         scene.add(model);
         brainScene={scene,camera,renderer,controls,model};
