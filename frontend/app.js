@@ -134,6 +134,9 @@ function initBrain3D(){
         model.position.sub(center.multiplyScalar(scale));
 
         const ri=loretaData.loreta_results.region_intensity;
+        const vals = Object.values(ri);
+        const minI = Math.min(...vals), maxI = Math.max(...vals);
+
         model.traverse(child=>{
             if(!child.isMesh) return;
             const geo=child.geometry, posAttr=geo.attributes.position;
@@ -150,17 +153,19 @@ function initBrain3D(){
                 else if(normY>0.5){intensity=ri.Parietal;region='Parietal';}
                 else{intensity=ri.Temporal;region='Temporal';}
 
+                const mappedI = maxI > minI ? (intensity - minI) / (maxI - minI) : 0.5;
+
                 // Accurate Blue -> Purple -> Red gradient matching legend
                 const c=new THREE.Color();
                 const colorLow=new THREE.Color('#2563EB');
                 const colorMid=new THREE.Color('#A78BFA');
                 const colorHigh=new THREE.Color('#DC2626');
-                if (intensity < 0.5) c.lerpColors(colorLow, colorMid, intensity * 2);
-                else c.lerpColors(colorMid, colorHigh, (intensity - 0.5) * 2);
+                if (mappedI < 0.5) c.lerpColors(colorLow, colorMid, mappedI * 2);
+                else c.lerpColors(colorMid, colorHigh, (mappedI - 0.5) * 2);
                 colors[i*3]=c.r; colors[i*3+1]=c.g; colors[i*3+2]=c.b;
             }
             geo.setAttribute('color',new THREE.BufferAttribute(colors,3));
-            child.material=new THREE.MeshStandardMaterial({vertexColors:true,metalness:0.1,roughness:0.8,transparent:false,opacity:1});
+            child.material=new THREE.MeshStandardMaterial({vertexColors:true,metalness:0.3,roughness:0.25,transparent:false,opacity:1});
         });
         scene.add(model);
         brainScene={scene,camera,renderer,controls,model};
