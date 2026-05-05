@@ -4,7 +4,7 @@
     --bg-card: #FFFFFF;
     --text-primary: #1F2937;
     --text-secondary: #6B7280;
-    --border-color: #D1D5DB; /* Slightly darker to make borders more visible as requested */
+    --border-color: #93C5FD; /* Light blue border matching user design */
     --primary-blue: #2563EB;
     --primary-blue-light: #EFF6FF;
     --purple-icon: #7C3AED;
@@ -52,7 +52,7 @@ body { background-color:var(--bg-main); color:var(--text-primary); overflow-x:hi
 .btn-outline:hover { background:var(--primary-blue-light); }
 
 /* ─── Cards ─── */
-.card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.05); padding:18px; width:100%; min-width:0; overflow:hidden; }
+.card { background:var(--bg-card); border:2px solid var(--border-color); border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.05); padding:18px; width:100%; min-width:0; overflow:hidden; }
 .card-header { display:flex; align-items:center; margin-bottom:14px; }
 .card-header h3 { font-size:1rem; font-weight:600; color:var(--text-primary); }
 .flex-between { justify-content:space-between; }
