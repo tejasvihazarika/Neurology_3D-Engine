@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroAnalysis - Brain Activity Viewer</title>
+    <meta name="description" content="Understand brain activity through EEG signals - A student project for visualizing brain regions">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+        }
+    }
+    </script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-box">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                </div>
+                <div class="header-text">
+                    <h2>NeuroAnalysis</h2>
+                    <p>Brain Activity Viewer</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-target="dashboard-view">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    Home
+                </a>
+                <a href="#" class="nav-item" data-target="dataset-view">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                    Data Info
+                </a>
+                <a href="#" class="nav-item" data-target="processing-view">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    Signal Steps
+                </a>
+                <a href="#" class="nav-item" data-target="3dbrain-view">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                    3D Brain
+                </a>
+                <a href="#" class="nav-item" data-target="analytics-view">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    Results
+                </a>
+                <a href="#" class="nav-item" data-target="2dviz-view">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+                    Charts
+                </a>
+                <a href="#" class="nav-item" data-target="comparison-view">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    Compare
+                </a>
+                <a href="#" class="nav-item" data-target="report-view">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Summary
+                </a>
+                <a href="#" class="nav-item" data-target="glossary-view">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    Glossary
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-wrapper">
+            <header class="topbar">
+                <div class="topbar-left"><span class="brand-name">NeuroAnalysis - Brain Activity Viewer</span></div>
+            </header>
+
+            <div class="scroll-container">
+                <!-- VIEW 1: Home -->
+                <div id="dashboard-view" class="view-content active">
+                    <div class="page-header">
+                        <div><h1>Brain Activity Dashboard</h1><p class="subtitle">See how the brain's electrical signals were recorded, processed, and understood.</p></div>
+                    </div>
+                    <div class="dashboard-grid-top">
+                        <div class="card dataset-summary">
+                            <div class="card-header"><div class="card-icon-container bg-purple-light"><svg class="icon-purple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div><div class="card-title-group"><h3>Recording Info</h3><span class="id-text">ID: EEG_LORETA_001</span></div></div>
+                            <div class="summary-list">
+                                <div class="summary-item"><span class="label">Sensors Used</span><span class="value" id="dash-channels">61</span></div>
+                                <div class="summary-item"><span class="label">Readings Per Second</span><span class="value" id="dash-sr">32 Hz</span></div>
+                                <div class="summary-item"><span class="label">Recording Length</span><span class="value" id="dash-duration">1.0 sec</span></div>
+                                <div class="summary-item"><span class="label">Brain State Found</span><span class="value classification-badge" id="dash-class">--</span></div>
+                            </div>
+                        </div>
+                        <div class="card pipeline-status">
+                            <div class="card-header"><h3>How We Processed the Signals</h3></div>
+                            <div class="pipeline-flow" id="pipeline-flow"></div>
+                        </div>
+                    </div>
+                    <!-- Region Activity only (waveform removed) -->
+                    <div class="card" style="margin-top:4px">
+                        <div class="card-header flex-between"><h3>Which Brain Areas Are Most Active?</h3><span class="badge freq" id="dash-dom-band">--</span></div>
+                        <div id="dash-region-chart" style="height:280px;width:100%"></div>
+                    </div>
+                </div>
+
+                <!-- VIEW 2: Data Info -->
+                <div id="dataset-view" class="view-content hidden">
+                    <div class="page-header"><div><h1>About the Data</h1><p class="subtitle">Details about the brain signals we recorded and their basic numbers.</p></div></div>
+                    <div class="dataset-simple-grid">
+                        <div class="card">
+                            <h3 class="card-title-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> Recording Details</h3>
+                            <ul class="info-list" id="dataset-info-list"></ul>
+                        </div>
+                        <div class="card">
+                            <h3 class="card-title-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Signal Numbers</h3>
+                            <div class="stats-grid-2x2" id="global-stats-grid"></div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:18px">
+                        <h3 style="margin-bottom:14px">How the Signal Looks at Different Frequencies</h3>
+                        <p class="helper-text">This chart shows how strong the brain signal is at each frequency. Each line is a different sensor on the head.</p>
+                        <div id="full-waveform-chart" style="height:350px;width:100%"></div>
+                    </div>
+                </div>
+
+                <!-- VIEW 3: Signal Steps -->
+                <div id="processing-view" class="view-content hidden">
+                    <div class="page-header"><div><h1>Signal Processing Steps</h1><p class="subtitle">How we turned raw brain signals into useful information, step by step.</p></div></div>
+                    <div class="card"><h3 style="margin-bottom:6px">Step 1: Breaking Down the Signal (FFT)</h3><p class="helper-text">FFT splits the brain signal into different speed patterns (frequencies). Think of it like separating music into bass, mid, and treble.</p><div id="fft-chart" style="height:350px;width:100%"></div></div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px">
+                        <div class="card"><h3 style="margin-bottom:6px">Step 2: Brain Wave Types</h3><p class="helper-text">Brain waves are grouped by speed: Delta (slow/sleep), Theta (drowsy), Alpha (relaxed), Beta (focused), Gamma (thinking hard).</p><div id="band-dist-chart" style="height:280px;width:100%"></div></div>
+                        <div class="card"><h3 style="margin-bottom:6px">Step 3: Which Brain Area?</h3><p class="helper-text">We map signals to brain regions: Frontal (thinking), Parietal (sensing), Temporal (hearing/memory), Occipital (seeing).</p><div id="region-map-chart" style="height:280px;width:100%"></div></div>
+                    </div>
+                </div>
+
+                <!-- VIEW 4: 3D Brain -->
+                <div id="3dbrain-view" class="view-content hidden">
+                    <div class="page-header"><div><h1>3D Brain Model</h1><p class="subtitle">See which parts of the brain are most active. Brighter colors = more activity.</p></div>
+                        <div class="brain-controls"><button class="btn-outline" id="btn-reset-view">Reset View</button></div>
+                    </div>
+                    <div class="brain-layout">
+                        <div class="card brain-viewer-card">
+                            <div id="brain-3d-container"></div>
+                            <div class="brain-controls-bar"><span class="control-hint">Drag to rotate | Scroll to zoom | Right-click to pan</span></div>
+                        </div>
+                        <div class="brain-sidebar">
+                            <div class="card brain-info-card"><h3>What the Brain is Doing</h3><div class="classification-result" id="brain-classification"></div></div>
+                            <div class="card brain-legend-card"><h3>Activity by Region</h3><div id="brain-legend"></div></div>
+                            <div class="card"><h3>Color Guide</h3><div class="color-legend"><div class="legend-bar"></div><div class="legend-labels"><span>Low Activity</span><span>Medium</span><span>High Activity</span></div></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 5: Results -->
+                <div id="analytics-view" class="view-content hidden">
+                    <div class="page-header"><div><h1>Analysis Results</h1><p class="subtitle">The key findings from studying the brain signals.</p></div></div>
+                    <div class="analytics-top-cards" id="analytics-cards"></div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px">
+                        <div class="card"><h3 style="margin-bottom:14px">How Active is Each Brain Area?</h3><div id="analytics-region-chart" style="height:320px;width:100%"></div></div>
+                        <div class="card"><h3 style="margin-bottom:14px">Wave Types in Each Brain Area</h3><div id="analytics-band-region-chart" style="height:320px;width:100%"></div></div>
+                    </div>
+                </div>
+
+                <!-- VIEW 6: Charts -->
+                <div id="2dviz-view" class="view-content hidden">
+                    <div class="page-header"><div><h1>Brain Activity Charts</h1><p class="subtitle">Simple charts showing brain wave patterns and which areas are working hardest.</p></div></div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+                        <div class="card"><h3 style="margin-bottom:6px">Brain Wave Strength</h3><p class="helper-text">Each bar shows how strong a particular type of brain wave is. Taller bars mean more of that wave type.</p><div id="viz2d-bands" style="height:320px;width:100%"></div></div>
+                        <div class="card"><h3 style="margin-bottom:6px">Brain Region Activity</h3><p class="helper-text">Each bar shows how active a brain region is. The most active region tells us what the brain was mainly doing.</p><div id="viz2d-regions" style="height:320px;width:100%"></div></div>
+                    </div>
+                </div>
+
+                <!-- VIEW 7: Compare -->
+                <div id="comparison-view" class="view-content hidden">
+                    <div class="page-header"><div><h1>Compare Two Time Periods</h1><p class="subtitle">See how brain activity changed between the first half and second half of the recording.</p></div></div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+                        <div class="card"><h3 style="margin-bottom:14px">First Half of Recording</h3><div id="comp-seg1" style="height:300px;width:100%"></div></div>
+                        <div class="card"><h3 style="margin-bottom:14px">Second Half of Recording</h3><div id="comp-seg2" style="height:300px;width:100%"></div></div>
+                    </div>
+                    <div class="card" style="margin-top:18px">
+                        <h3 style="margin-bottom:6px">What Changed? (Slide to explore)</h3>
+                        <p class="helper-text">Use the slider to highlight each brain region and see how its activity changed between the two halves.</p>
+                        <div class="slider-container">
+                            <input type="range" id="comp-slider" min="0" max="3" value="0" step="1" class="comp-slider">
+                            <div class="slider-labels" id="slider-labels"></div>
+                        </div>
+                        <div id="comp-diff-detail" class="comp-detail-card"></div>
+                    </div>
+                </div>
+
+                <!-- VIEW 8: Summary -->
+                <div id="report-view" class="view-content hidden">
+                    <div class="page-header"><div><h1>Session Summary</h1><p class="subtitle">Everything we found, explained simply.</p></div></div>
+                    <div id="report-content"></div>
+                </div>
+
+                <!-- VIEW 9: Glossary -->
+                <div id="glossary-view" class="view-content hidden">
+                    <div class="page-header"><div><h1>Glossary - What Do These Words Mean?</h1><p class="subtitle">Simple explanations of the scientific terms used in this project.</p></div></div>
+                    <div id="glossary-content"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
