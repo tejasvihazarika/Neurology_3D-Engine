@@ -313,8 +313,8 @@ function renderReport(){
 function renderGlossary(){
     const terms=[
         {term:'EEG (Electroencephalogram)',def:'A way to record the brain\'s electrical activity using small sensors placed on the scalp. It\'s painless and non-invasive — like wearing a special cap.'},
-        {term:'Electrode / Sensor',def:'A small metal disc placed on the head to pick up electrical signals from the brain. Our recording used 61 sensors.'},
-        {term:'Sampling Rate (Hz)',def:'How many times per second we take a reading. "32 Hz" means 32 snapshots of brain activity every second.'},
+        {term:'Electrode / Sensor',def:'A small metal disc placed on the head to pick up electrical signals from the brain. Our recording used 64 sensors.'},
+        {term:'Sampling Rate (Hz)',def:'How many times per second we take a reading. "256 Hz" means 256 snapshots of brain activity every second.'},
         {term:'FFT (Fast Fourier Transform)',def:'A math trick that breaks a complex signal into simpler wave patterns. Like splitting white light into a rainbow of colors.'},
         {term:'Frequency Band',def:'A group of brain waves at similar speeds. The main types are Delta (very slow), Theta (slow), Alpha (medium), Beta (fast), and Gamma (very fast).'},
         {term:'Delta Waves (0.5–4 Hz)',def:'Very slow brain waves. Usually seen during deep sleep. If these are dominant, the person is probably in deep rest.'},
