@@ -1,0 +1,316 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px;
+        }
+        h1 {
+            color: #2563EB;
+            font-size: 28px;
+            border-bottom: 2px solid #93C5FD;
+            padding-bottom: 8px;
+        }
+        h2 {
+            color: #1F2937;
+            font-size: 22px;
+            margin-top: 30px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #D1D5DB;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #F3F4F6;
+            color: #1F2937;
+            font-weight: 600;
+        }
+        code {
+            background-color: #F3F4F6;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+        }
+        pre {
+            background-color: #F3F4F6;
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+        pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+        ul, ol {
+            margin-bottom: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        @page {
+            margin: 1.5cm;
+        }
+    </style>
+</head>
+<body>
+    <h1>Neurology 3D Visualization Engine – Project Overview</h1>
+<h2>1. High‑level Workflow</h2>
+<ol>
+<li><strong>Raw EEG acquisition</strong> – Sensors placed on the scalp capture voltage changes at <strong>256 Hz</strong>.</li>
+<li><strong>Baseline correction</strong> – Small DC drift is removed so the signal is centred around zero.</li>
+<li><strong>FFT (Fast Fourier Transform)</strong> – The time‑domain signal is transformed into the frequency domain.</li>
+<li><strong>Frequency‑band aggregation</strong> – Power is summed into the classic EEG bands (Delta, Theta, Alpha, Beta, Gamma).</li>
+<li><strong>LORETA source localisation</strong> – Using the band‑power map the algorithm estimates which cortical region generated the activity.</li>
+<li><strong>Classification</strong> – The dominant region &amp; dominant band are mapped to a human‑readable brain‑state description.</li>
+<li><strong>Visualization</strong> – The results are displayed in:</li>
+<li>a <strong>light‑themed dashboard</strong> with cards, bar charts and a comparison slider,</li>
+<li>a <strong>3‑D brain model</strong> (glTF) coloured by region intensity, and</li>
+<li>a <strong>glossary</strong> that explains every technical term for beginners.</li>
+</ol>
+<h2>2. Repository Layout</h2>
+<p><code>Neurology-3D-Viz-Engine-master/
+│
+├─ frontend/               # All client‑side files (HTML/CSS/JS)
+│   ├─ index.html          # Main page, navigation and placeholders for the 8 views
+│   ├─ styles.css          # Light theme, borders, layout utilities
+│   ├─ app.js              # Core JavaScript: data loading, Plotly charts, Three.js brain
+│   ├─ brain_model.glb     # Low‑poly 3‑D brain mesh (GLTF)
+│   ├─ loreta_results.json # Processed result produced by loreta_pipeline.py
+│   └─ … (additional assets: images, icons)
+│
+├─ loreta_pipeline.py      # Python pipeline that reads raw CSV, corrects baseline, runs FFT &amp; LORETA
+├─ clean_data.py           # Helper script used while preparing training data (not shipped)
+├─ app.py                  # Simple Flask‑like wrapper used for local testing (optional)
+├─ .gitignore              # Ignores large raw data folders, virtual‑env, .env etc.
+└─ README.md               # Project description for GitHub</code></p>
+<h2>3. What Each Front‑end File Does</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Role</th>
+<th>Key Features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>index.html</strong></td>
+<td>Skeleton of the single‑page app. Contains a sidebar navigation (<code>nav-item</code>), a top bar, and eight hidden <code>view‑content</code> sections (Dashboard, 3D Brain, Charts, Comparison, Report, Glossary, etc.).</td>
+<td>Uses semantic <code>&lt;section&gt;</code> elements, loads <code>app.js</code> at the bottom.</td>
+</tr>
+<tr>
+<td><strong>styles.css</strong></td>
+<td>Defines the <strong>light‑theme design system</strong> – colour tokens, typography, borders, cards, responsive grids, and the new blue <code>#93C5FD</code> boundary you asked for.</td>
+<td>Uses CSS custom properties (<code>--primary‑blue</code>, <code>--border‑color</code>), adds <code>2px</code> solid blue borders to cards, sidebar, top‑bar.</td>
+</tr>
+<tr>
+<td><strong>app.js</strong></td>
+<td>JavaScript "engine" that:</td>
+<td></td>
+</tr>
+<tr>
+<td>- fetches <code>loreta_results.json</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- populates all cards &amp; charts via Plotly</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- builds the comparison slider</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- creates the 3‑D brain with Three.js, applies a <strong>normalised blue → purple → red gradient</strong>, makes the material glossy (<code>metalness:0.3, roughness:0.25</code>).</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- disables Plotly zoom (<code>fixedrange:true</code>).</td>
+<td>Centralises all UI logic, keeps the code modular with helper functions (<code>renderDashboard()</code>, <code>render2DViz()</code>, <code>initBrain3D()</code>).</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>brain_model.glb</strong></td>
+<td>Low‑poly representation of the human brain. Loaded with <code>GLTFLoader</code>.</td>
+<td>Vertices are coloured per‑vertex based on region intensity.</td>
+</tr>
+<tr>
+<td><strong>loreta_results.json</strong></td>
+<td>The final output of the Python pipeline. Holds:</td>
+<td></td>
+</tr>
+<tr>
+<td>- global statistics (sampling rate, duration, etc.)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- frequency‑band distribution</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- region percentages &amp; intensities</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- classification (label, description, confidence)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- comparison between first/second half of the recording</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>loreta_pipeline.py</strong></td>
+<td>Pure‑Python processing script (run locally). Steps: load raw CSV → baseline correction → FFT → band‑power → LORETA → write JSON.</td>
+<td>Uses <code>numpy</code>, <code>scipy</code>, and the publicly‑available LORETA algorithm.</td>
+</tr>
+<tr>
+<td><strong>clean_data.py</strong></td>
+<td>Utility for trimming huge raw EEG folders (not needed for the web demo).</td>
+<td>Ignored by <code>.gitignore</code>.</td>
+</tr>
+<tr>
+<td><strong>app.py</strong></td>
+<td>Tiny convenience script that can <code>python -m http.server 8080</code> from the <code>frontend/</code> folder.</td>
+<td>Not part of the production build – just for quick local testing.</td>
+</tr>
+</tbody>
+</table>
+<h2>4. How the Project Works – End‑to‑End</h2>
+<ol>
+<li><strong>Start the server</strong> (e.g. <code>python -m http.server 8080</code> from <code>frontend/</code>).</li>
+<li>Browser loads <code>index.html</code>. The sidebar navigation automatically marks the first view (<strong>Dashboard</strong>) as active.</li>
+<li><code>app.js</code> immediately fetches <code>loreta_results.json</code>. All UI components are populated:</li>
+<li><strong>Dashboard cards</strong> show sensor count, sampling rate, duration, classification, dominant band, etc.</li>
+<li><strong>Bar charts</strong> (region activity, band distribution) are drawn with Plotly – zoom disabled for a clean experience.</li>
+<li><strong>3‑D brain</strong> is built with Three.js. Each vertex colour is computed from the <strong>normalised intensity</strong> of its region, using the blue‑purple‑red gradient. A glossy material gives a premium look.</li>
+<li><strong>Comparison slider</strong> lets the user slide between <code>first_half</code> and <code>second_half</code> activity, updating a detail card.</li>
+<li><strong>Glossary</strong> explains every term (EEG, FFT, LORETA, etc.) in beginner‑friendly language.</li>
+<li>Users may rotate, pan and zoom the 3‑D brain with the mouse (OrbitControls). The left‑click‑drag‑zoom is disabled – only rotation &amp; pan remain (as requested).</li>
+<li>All charts are static (no streaming). Changing the underlying <code>loreta_results.json</code> and reloading the page will instantly update the whole UI.</li>
+</ol>
+<h2>5. Project Outcome</h2>
+<ul>
+<li><strong>Visual output</strong>: an interactive, student‑friendly web dashboard that shows <em>where</em> in the brain activity is happening and <em>what</em> the brain is likely doing (e.g., “Drowsy / Memory Processing”).</li>
+<li><strong>Educational value</strong>: the glossary and the simplified language let beginners understand EEG concepts without digging into research papers.</li>
+<li><strong>Deployable</strong>: the whole front‑end lives in the <code>frontend/</code> folder and can be published on GitHub Pages (<code>gh‑pages</code> branch). No backend server is required beyond serving static files.</li>
+</ul>
+<h2>6. Terminology &amp; Why It Is Used</h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning in this Project</th>
+<th>Reason for Inclusion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>EEG (Electroencephalogram)</strong></td>
+<td>Voltage measured on the scalp using 64 sensors.</td>
+<td>Provides the raw brain‑wave data that fuels the whole analysis.</td>
+</tr>
+<tr>
+<td><strong>Baseline correction</strong></td>
+<td>Subtracts the mean (or a low‑order polynomial) from the raw signal.</td>
+<td>Removes slow drift caused by electrode‑skin impedance, giving cleaner FFT results.</td>
+</tr>
+<tr>
+<td><strong>FFT (Fast Fourier Transform)</strong></td>
+<td>Converts the time‑domain EEG into frequency‑domain power spectra.</td>
+<td>Allows us to separate activity into the standard brain‑wave bands.</td>
+</tr>
+<tr>
+<td><strong>Frequency band</strong></td>
+<td>Delta (0.5‑4 Hz), Theta (4‑8 Hz), Alpha (8‑13 Hz), Beta (13‑30 Hz), Gamma (30‑45 Hz).</td>
+<td>Different bands are associated with distinct cognitive states; the dominant band drives the classification label.</td>
+</tr>
+<tr>
+<td><strong>LORETA (Low‑Resolution Electromagnetic Tomography)</strong></td>
+<td>Inverse‑modelling algorithm that estimates the <em>source</em> of EEG activity inside the brain volume.</td>
+<td>Gives a spatial map (region percentages) that we can visualise on the 3‑D brain.</td>
+</tr>
+<tr>
+<td><strong>Region percentages / intensity</strong></td>
+<td>Percentage of total power contributed by Frontal, Parietal, Temporal, Occipital lobes; intensity is a normalised scalar (0‑1).</td>
+<td>Drives the colour of each brain lobe, letting users instantly see which area is most active.</td>
+</tr>
+<tr>
+<td><strong>Classification</strong></td>
+<td>Human‑readable label (e.g., <em>Drowsy / Memory Processing</em>) together with a confidence score.</td>
+<td>Summarises the entire pipeline into a simple phrase a beginner can understand.</td>
+</tr>
+<tr>
+<td><strong>Plotly</strong></td>
+<td>JavaScript charting library used for all 2‑D visualisations (bar charts, pie charts, etc.).</td>
+<td>Provides interactive, responsive charts with minimal code and excellent aesthetics.</td>
+</tr>
+<tr>
+<td><strong>Three.js</strong></td>
+<td>WebGL‑based 3‑D engine for rendering the brain mesh.</td>
+<td>Enables a real‑time, rotatable 3‑D brain that reacts to the data.</td>
+</tr>
+<tr>
+<td><strong>Glossary</strong></td>
+<td>A dedicated page that defines every technical term in plain English.</td>
+<td>Bridges the gap between a professional research tool and a learning platform.</td>
+</tr>
+<tr>
+<td><strong>GitHub Pages (<code>gh‑pages</code> branch)</strong></td>
+<td>Static hosting service that serves the <code>frontend/</code> folder as a live website.</td>
+<td>Gives you a zero‑cost, always‑on URL (<code>https://&lt;user&gt;.github.io/Neurology_3D-Engine/</code>).</td>
+</tr>
+</tbody>
+</table>
+<h2>7. Detailed Step‑by‑Step Walkthrough (for a New Contributor)</h2>
+<ol>
+<li><strong>Clone the repo</strong>
+   <code>bash
+   git clone https://github.com/tejasvihazarika/Neurology_3D-Engine.git
+   cd Neurology_3D-Engine</code></li>
+<li><strong>Run the Python pipeline</strong> (if you have new raw data)
+   <code>bash
+   python loreta_pipeline.py raw_data.csv
+   # Produces loreta_results.json inside frontend/</code></li>
+<li><strong>Launch the web UI</strong>
+   <code>bash
+   cd frontend
+   python -m http.server 8080
+   # Open http://localhost:8080 in a browser</code></li>
+<li><strong>Explore the UI</strong> – use the sidebar to jump between:</li>
+<li><em>Dashboard</em> – quick stats &amp; classification.</li>
+<li><em>3D Brain</em> – rotate, pan, watch the colour gradient per region.</li>
+<li><em>Charts</em> – band distribution and region percentages.</li>
+<li><em>Comparison</em> – slider to compare first vs. second half of the recording.</li>
+<li><em>Report</em> – a printable summary of the session.</li>
+<li><em>Glossary</em> – definitions for every term.</li>
+<li><strong>Update the design</strong> – edit <code>styles.css</code> for colours/borders, <code>app.js</code> for chart options, or replace <code>brain_model.glb</code> for a higher‑poly mesh.</li>
+<li><strong>Deploy</strong> – after committing changes, push <code>main</code> and <code>gh‑pages</code> as demonstrated earlier.</li>
+</ol>
+<hr />
+<p><em>Prepared for Vedant Kalla – May 2026</em> </p>
+<hr />
+</body>
+</html>
