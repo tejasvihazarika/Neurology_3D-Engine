@@ -11,9 +11,9 @@
     "variance": 30.99,
     "max_amplitude": 27.54,
     "min_amplitude": -31.07,
-    "total_channels": 61,
-    "total_samples": 32,
-    "sampling_rate": 32,
+    "total_channels": 64,
+    "total_samples": 256,
+    "sampling_rate": 256,
     "duration_seconds": 1.0
   },
   "frequency_bands": {
