@@ -19,3 +19,14 @@ Thumbs.db
 # --- Optional ---
 # If your cleaned CSV gets very large, uncomment the line below
 # processed_data/clean_eeg.csv
+
+# --- Generated Artifacts and Docs ---
+*.pdf
+*.html
+*.fig
+processed_data/*.png
+processed_data/*.csv
+!processed_data/clean_eeg.csv
+
+# --- Submodules or external projects ---
+Neurology_3D-Engine/
