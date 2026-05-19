@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-let loretaData = null, brainScene = null;
+let loretaData = null, brainScene = null, benchmarkData = null;
 const REGION_COLORS = { Frontal:'#2563EB', Parietal:'#7C3AED', Temporal:'#0891B2', Occipital:'#DC2626' };
 const BAND_COLORS = { Delta:'#6366F1', Theta:'#0891B2', Alpha:'#059669', Beta:'#D97706', Gamma:'#DC2626' };
 const lightLayout = (extra={}) => ({
@@ -32,6 +32,11 @@ fetch('loreta_results.json').then(r=>r.json()).then(data=>{
     loretaData=data; renderDashboard(); renderDataset(); renderProcessing();
     renderAnalytics(); render2DViz(); renderComparison(); renderReport(); renderGlossary();
 }).catch(e=>console.error('Load error',e));
+
+// Load benchmark results (separate file)
+fetch('benchmark_results.json').then(r=>r.json()).then(data=>{
+    benchmarkData=data; renderBenchmark();
+}).catch(e=>{ console.log('No benchmark data yet (run neuroai_benchmark.py first)'); renderBenchmarkPlaceholder(); });
 
 // ─── 1. DASHBOARD ─── //
 function renderDashboard(){
@@ -333,4 +338,125 @@ function renderGlossary(){
     ];
     document.getElementById('glossary-content').innerHTML=terms.map(t=>
         `<div class="card glossary-item"><h4>${t.term}</h4><p>${t.def}</p></div>`).join('');
+}
+
+// ─── 10. AI BENCHMARK ─── //
+function renderBenchmarkPlaceholder(){
+    const container = document.getElementById('benchmark-info-bar');
+    if(container) container.innerHTML = `<div class="benchmark-no-data" style="grid-column:1/-1">
+        <h3>No Benchmark Results Yet</h3>
+        <p>Run the NeuroAI benchmark pipeline to generate ML results:</p>
+        <p style="margin-top:8px"><code>python neuroai_benchmark.py</code></p>
+        <p style="margin-top:8px">This will train MLP, SVM, and Random Forest models on your EEG data and save results here.</p>
+    </div>`;
+}
+
+function renderBenchmark(){
+    if(!benchmarkData) return;
+    const info = benchmarkData.benchmark_info;
+    const best = benchmarkData.best_result;
+    const comparison = benchmarkData.comparison;
+    const experiments = benchmarkData.experiments;
+
+    // Info bar
+    document.getElementById('benchmark-info-bar').innerHTML = [
+        {v: info.experiments_run, l: 'Experiments'},
+        {v: info.models_tested.length, l: 'Models Tested'},
+        {v: info.total_channels, l: 'EEG Channels'},
+        {v: info.total_samples, l: 'Data Samples'},
+        {v: info.sampling_rate + ' Hz', l: 'Sampling Rate'}
+    ].map(s => `<div class="benchmark-stat"><div class="bs-value">${s.v}</div><div class="bs-label">${s.l}</div></div>`).join('');
+
+    // Best result banner
+    document.getElementById('benchmark-best-result').innerHTML = `
+        <div class="bbr-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+        <div class="bbr-text"><h3>Best Performing Configuration</h3><p>${best.experiment} features + ${best.model} classifier</p></div>
+        <div class="bbr-accuracy">${best.accuracy}%</div>`;
+
+    // Comparison chart (grouped bar)
+    const models = ['MLP', 'SVM', 'RandomForest'];
+    const expNames = ['Raw EEG', 'Frequency Bands', 'LORETA Source', 'Combined'];
+    const modelColors = {MLP:'#2563EB', SVM:'#7C3AED', RandomForest:'#059669'};
+
+    const traces = models.map(model => ({
+        name: model,
+        x: expNames,
+        y: expNames.map(exp => {
+            const match = comparison.find(c => c.experiment === exp && c.model === model);
+            return match ? match.accuracy : 0;
+        }),
+        type: 'bar',
+        marker: {color: modelColors[model], opacity: 0.85},
+        text: expNames.map(exp => {
+            const match = comparison.find(c => c.experiment === exp && c.model === model);
+            return match ? match.accuracy + '%' : '';
+        }),
+        textposition: 'outside'
+    }));
+
+    Plotly.newPlot('benchmark-comparison-chart', traces, lightLayout({
+        barmode: 'group', margin:{t:30,l:50,r:20,b:60},
+        yaxis: {title: 'Accuracy (%)', range: [0, 110], gridcolor:'#F3F4F6'},
+        xaxis: {gridcolor:'#F3F4F6'},
+        legend: {orientation:'h', y:1.12, x:0.5, xanchor:'center'}
+    }), pCfg);
+
+    // Metrics chart (radar-style as grouped bar)
+    const metricNames = ['precision', 'recall', 'f1'];
+    const metricLabels = ['Precision', 'Recall', 'F1-Score'];
+    const bestExpKey = Object.keys(experiments).find(k => experiments[k].name === best.experiment) || 'combined';
+    const bestExpResults = experiments[bestExpKey]?.results || {};
+
+    const metricTraces = models.map(model => ({
+        name: model,
+        x: metricLabels,
+        y: metricNames.map(m => bestExpResults[model] ? bestExpResults[model][m] : 0),
+        type: 'bar',
+        marker: {color: modelColors[model], opacity: 0.85}
+    }));
+
+    Plotly.newPlot('benchmark-metrics-chart', metricTraces, lightLayout({
+        barmode: 'group', margin:{t:20,l:50,r:20,b:40},
+        yaxis: {title: 'Score (%)', range: [0, 110], gridcolor:'#F3F4F6'},
+        legend: {orientation:'h', y:1.15, x:0.5, xanchor:'center'},
+        title: {text: `Feature Set: ${best.experiment}`, font:{size:12, color:'#6B7280'}}
+    }), pCfg);
+
+    // Confusion matrix heatmap (best model)
+    const bestModelResults = bestExpResults[best.model];
+    if(bestModelResults && bestModelResults.confusion_matrix && bestModelResults.confusion_matrix.length > 0){
+        const cm = bestModelResults.confusion_matrix;
+        const classes = bestModelResults.classes || [];
+        // Truncate long class names
+        const shortClasses = classes.map(c => c.length > 12 ? c.substring(0,10)+'...' : c);
+
+        Plotly.newPlot('benchmark-confusion-chart', [{
+            z: cm, x: shortClasses, y: shortClasses,
+            type: 'heatmap',
+            colorscale: [[0,'#EFF6FF'],[0.5,'#93C5FD'],[1,'#2563EB']],
+            showscale: false,
+            text: cm.map(row => row.map(v => v.toString())),
+            texttemplate: '%{text}',
+            hovertemplate: 'Actual: %{y}<br>Predicted: %{x}<br>Count: %{z}<extra></extra>'
+        }], lightLayout({
+            margin:{t:20,l:90,r:20,b:70},
+            xaxis:{title:'Predicted', tickangle:-35, gridcolor:'#F3F4F6'},
+            yaxis:{title:'Actual', autorange:'reversed', gridcolor:'#F3F4F6'}
+        }), pCfg);
+    }
+
+    // Experiment detail cards
+    const expEntries = Object.entries(experiments);
+    document.getElementById('benchmark-experiment-cards').innerHTML = expEntries.map(([key, exp]) => {
+        const bestModel = Object.entries(exp.results).reduce((a,b) => (b[1].accuracy||0) > (a[1].accuracy||0) ? b : a);
+        return `<div class="benchmark-exp-card">
+            <h4>${exp.name}</h4>
+            <p>${exp.description}</p>
+            <div class="be-metrics">
+                <span class="be-metric acc">Best: ${bestModel[1].accuracy}%</span>
+                <span class="be-metric feat">${exp.num_features} features</span>
+                <span class="be-metric samp">${exp.num_samples} samples</span>
+            </div>
+        </div>`;
+    }).join('');
 }

@@ -8,7 +8,7 @@ import os
 
 # 2. Set up the Web Page Title
 st.set_page_config(layout="wide")
-st.title("🧠 3D Visualization Engine in Neurology")
+st.title(" 3D Visualization Engine in Neurology")
 st.write("**Mid-Semester Prototype:** Data Loading & Structural Rendering")
 
 # 3. Sidebar for Navigation & Status

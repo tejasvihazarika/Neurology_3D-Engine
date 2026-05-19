@@ -59,6 +59,10 @@
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                     Comparison
                 </a>
+                <a href="#" class="nav-item" data-target="benchmark-view">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/><circle cx="12" cy="7" r="2"/><circle cx="18" cy="2" r="1"/></svg>
+                    AI Benchmark
+                </a>
                 <a href="#" class="nav-item" data-target="report-view">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     Summary
@@ -186,6 +190,34 @@
                             <div class="slider-labels" id="slider-labels"></div>
                         </div>
                         <div id="comp-diff-detail" class="comp-detail-card"></div>
+                    </div>
+                </div>
+
+                <!-- VIEW: AI Benchmark -->
+                <div id="benchmark-view" class="view-content hidden">
+                    <div class="page-header"><div><h1>NeuroAI Benchmark Results</h1><p class="subtitle">ML models tested on EEG features — inspired by Meta FAIR's NeuralBench framework.</p></div></div>
+                    <div class="benchmark-info-bar" id="benchmark-info-bar"></div>
+                    <div class="benchmark-best-result" id="benchmark-best-result"></div>
+                    <div class="card" style="margin-top:18px">
+                        <h3 style="margin-bottom:6px">Experiment Comparison</h3>
+                        <p class="helper-text">Comparing 4 feature extraction methods across 3 ML models. Higher accuracy = better feature set for classifying brain states.</p>
+                        <div id="benchmark-comparison-chart" style="height:380px;width:100%"></div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px">
+                        <div class="card">
+                            <h3 style="margin-bottom:6px">Model Performance Metrics</h3>
+                            <p class="helper-text">Detailed precision, recall, and F1-score for each model+feature combination.</p>
+                            <div id="benchmark-metrics-chart" style="height:320px;width:100%"></div>
+                        </div>
+                        <div class="card">
+                            <h3 style="margin-bottom:6px">Confusion Matrix (Best Model)</h3>
+                            <p class="helper-text">Shows which brain states the best model confuses with each other.</p>
+                            <div id="benchmark-confusion-chart" style="height:320px;width:100%"></div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:18px">
+                        <h3 style="margin-bottom:14px">Experiment Details</h3>
+                        <div id="benchmark-experiment-cards" class="benchmark-experiments-grid"></div>
                     </div>
                 </div>
 
