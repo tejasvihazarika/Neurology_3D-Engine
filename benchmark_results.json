@@ -1,0 +1,525 @@
+{
+  "benchmark_info": {
+    "framework": "NeuroAI Benchmark (Inspired by Meta FAIR NeuralBench)",
+    "total_channels": 61,
+    "total_samples": 256,
+    "sampling_rate": 32,
+    "window_size": 4,
+    "step_size": 2,
+    "models_tested": [
+      "MLP",
+      "SVM",
+      "RandomForest"
+    ],
+    "experiments_run": 4
+  },
+  "experiments": {
+    "raw_eeg": {
+      "name": "Raw EEG Features",
+      "description": "Statistical features (mean, std, range, MAD) from raw EEG signals",
+      "num_features": 244,
+      "num_samples": 127,
+      "results": {
+        "MLP": {
+          "accuracy": 55.9,
+          "precision": 57.6,
+          "recall": 55.9,
+          "f1": 56.1,
+          "confusion_matrix": [
+            [
+              34,
+              0,
+              0
+            ],
+            [
+              0,
+              26,
+              0
+            ],
+            [
+              0,
+              0,
+              67
+            ]
+          ],
+          "classes": [
+            "Frontal",
+            "Occipital",
+            "Temporal"
+          ],
+          "num_samples": 127,
+          "num_features": 244,
+          "num_classes": 3
+        },
+        "SVM": {
+          "accuracy": 63.8,
+          "precision": 70.6,
+          "recall": 63.8,
+          "f1": 57.6,
+          "confusion_matrix": [
+            [
+              27,
+              0,
+              7
+            ],
+            [
+              1,
+              20,
+              5
+            ],
+            [
+              0,
+              0,
+              67
+            ]
+          ],
+          "classes": [
+            "Frontal",
+            "Occipital",
+            "Temporal"
+          ],
+          "num_samples": 127,
+          "num_features": 244,
+          "num_classes": 3
+        },
+        "RandomForest": {
+          "accuracy": 67.0,
+          "precision": 71.5,
+          "recall": 67.0,
+          "f1": 64.1,
+          "confusion_matrix": [
+            [
+              34,
+              0,
+              0
+            ],
+            [
+              0,
+              26,
+              0
+            ],
+            [
+              0,
+              0,
+              67
+            ]
+          ],
+          "classes": [
+            "Frontal",
+            "Occipital",
+            "Temporal"
+          ],
+          "num_samples": 127,
+          "num_features": 244,
+          "num_classes": 3
+        }
+      }
+    },
+    "frequency_bands": {
+      "name": "Frequency Band Features",
+      "description": "Power in Delta, Theta, Alpha, Beta, Gamma bands per channel",
+      "num_features": 305,
+      "num_samples": 127,
+      "results": {
+        "MLP": {
+          "accuracy": 54.3,
+          "precision": 52.9,
+          "recall": 54.3,
+          "f1": 53.1,
+          "confusion_matrix": [
+            [
+              34,
+              0,
+              0
+            ],
+            [
+              0,
+              26,
+              0
+            ],
+            [
+              0,
+              0,
+              67
+            ]
+          ],
+          "classes": [
+            "Frontal",
+            "Occipital",
+            "Temporal"
+          ],
+          "num_samples": 127,
+          "num_features": 305,
+          "num_classes": 3
+        },
+        "SVM": {
+          "accuracy": 55.9,
+          "precision": 51.8,
+          "recall": 55.9,
+          "f1": 46.4,
+          "confusion_matrix": [
+            [
+              21,
+              0,
+              13
+            ],
+            [
+              2,
+              16,
+              8
+            ],
+            [
+              0,
+              0,
+              67
+            ]
+          ],
+          "classes": [
+            "Frontal",
+            "Occipital",
+            "Temporal"
+          ],
+          "num_samples": 127,
+          "num_features": 305,
+          "num_classes": 3
+        },
+        "RandomForest": {
+          "accuracy": 54.3,
+          "precision": 55.6,
+          "recall": 54.3,
+          "f1": 47.6,
+          "confusion_matrix": [
+            [
+              34,
+              0,
+              0
+            ],
+            [
+              0,
+              26,
+              0
+            ],
+            [
+              0,
+              0,
+              67
+            ]
+          ],
+          "classes": [
+            "Frontal",
+            "Occipital",
+            "Temporal"
+          ],
+          "num_samples": 127,
+          "num_features": 305,
+          "num_classes": 3
+        }
+      }
+    },
+    "loreta_source": {
+      "name": "LORETA Source Features",
+      "description": "Region-aggregated band powers (Frontal, Parietal, Temporal, Occipital)",
+      "num_features": 20,
+      "num_samples": 127,
+      "results": {
+        "MLP": {
+          "accuracy": 46.4,
+          "precision": 46.3,
+          "recall": 46.4,
+          "f1": 45.1,
+          "confusion_matrix": [
+            [
+              32,
+              1,
+              1
+            ],
+            [
+              0,
+              25,
+              1
+            ],
+            [
+              0,
+              0,
+              67
+            ]
+          ],
+          "classes": [
+            "Frontal",
+            "Occipital",
+            "Temporal"
+          ],
+          "num_samples": 127,
+          "num_features": 20,
+          "num_classes": 3
+        },
+        "SVM": {
+          "accuracy": 57.5,
+          "precision": 51.6,
+          "recall": 57.5,
+          "f1": 51.1,
+          "confusion_matrix": [
+            [
+              14,
+              4,
+              16
+            ],
+            [
+              2,
+              15,
+              9
+            ],
+            [
+              4,
+              1,
+              62
+            ]
+          ],
+          "classes": [
+            "Frontal",
+            "Occipital",
+            "Temporal"
+          ],
+          "num_samples": 127,
+          "num_features": 20,
+          "num_classes": 3
+        },
+        "RandomForest": {
+          "accuracy": 54.4,
+          "precision": 51.0,
+          "recall": 54.4,
+          "f1": 50.6,
+          "confusion_matrix": [
+            [
+              34,
+              0,
+              0
+            ],
+            [
+              0,
+              26,
+              0
+            ],
+            [
+              0,
+              0,
+              67
+            ]
+          ],
+          "classes": [
+            "Frontal",
+            "Occipital",
+            "Temporal"
+          ],
+          "num_samples": 127,
+          "num_features": 20,
+          "num_classes": 3
+        }
+      }
+    },
+    "combined": {
+      "name": "Combined Features",
+      "description": "Frequency band + LORETA source features combined",
+      "num_features": 325,
+      "num_samples": 127,
+      "results": {
+        "MLP": {
+          "accuracy": 55.9,
+          "precision": 55.9,
+          "recall": 55.9,
+          "f1": 55.3,
+          "confusion_matrix": [
+            [
+              34,
+              0,
+              0
+            ],
+            [
+              0,
+              26,
+              0
+            ],
+            [
+              0,
+              0,
+              67
+            ]
+          ],
+          "classes": [
+            "Frontal",
+            "Occipital",
+            "Temporal"
+          ],
+          "num_samples": 127,
+          "num_features": 325,
+          "num_classes": 3
+        },
+        "SVM": {
+          "accuracy": 56.7,
+          "precision": 57.2,
+          "recall": 56.7,
+          "f1": 48.1,
+          "confusion_matrix": [
+            [
+              23,
+              0,
+              11
+            ],
+            [
+              4,
+              16,
+              6
+            ],
+            [
+              0,
+              0,
+              67
+            ]
+          ],
+          "classes": [
+            "Frontal",
+            "Occipital",
+            "Temporal"
+          ],
+          "num_samples": 127,
+          "num_features": 325,
+          "num_classes": 3
+        },
+        "RandomForest": {
+          "accuracy": 57.5,
+          "precision": 57.6,
+          "recall": 57.5,
+          "f1": 52.7,
+          "confusion_matrix": [
+            [
+              34,
+              0,
+              0
+            ],
+            [
+              0,
+              26,
+              0
+            ],
+            [
+              0,
+              0,
+              67
+            ]
+          ],
+          "classes": [
+            "Frontal",
+            "Occipital",
+            "Temporal"
+          ],
+          "num_samples": 127,
+          "num_features": 325,
+          "num_classes": 3
+        }
+      }
+    }
+  },
+  "comparison": [
+    {
+      "experiment": "Raw EEG",
+      "model": "MLP",
+      "accuracy": 55.9,
+      "precision": 57.6,
+      "recall": 55.9,
+      "f1": 56.1
+    },
+    {
+      "experiment": "Raw EEG",
+      "model": "SVM",
+      "accuracy": 63.8,
+      "precision": 70.6,
+      "recall": 63.8,
+      "f1": 57.6
+    },
+    {
+      "experiment": "Raw EEG",
+      "model": "RandomForest",
+      "accuracy": 67.0,
+      "precision": 71.5,
+      "recall": 67.0,
+      "f1": 64.1
+    },
+    {
+      "experiment": "Frequency Bands",
+      "model": "MLP",
+      "accuracy": 54.3,
+      "precision": 52.9,
+      "recall": 54.3,
+      "f1": 53.1
+    },
+    {
+      "experiment": "Frequency Bands",
+      "model": "SVM",
+      "accuracy": 55.9,
+      "precision": 51.8,
+      "recall": 55.9,
+      "f1": 46.4
+    },
+    {
+      "experiment": "Frequency Bands",
+      "model": "RandomForest",
+      "accuracy": 54.3,
+      "precision": 55.6,
+      "recall": 54.3,
+      "f1": 47.6
+    },
+    {
+      "experiment": "LORETA Source",
+      "model": "MLP",
+      "accuracy": 46.4,
+      "precision": 46.3,
+      "recall": 46.4,
+      "f1": 45.1
+    },
+    {
+      "experiment": "LORETA Source",
+      "model": "SVM",
+      "accuracy": 57.5,
+      "precision": 51.6,
+      "recall": 57.5,
+      "f1": 51.1
+    },
+    {
+      "experiment": "LORETA Source",
+      "model": "RandomForest",
+      "accuracy": 54.4,
+      "precision": 51.0,
+      "recall": 54.4,
+      "f1": 50.6
+    },
+    {
+      "experiment": "Combined",
+      "model": "MLP",
+      "accuracy": 55.9,
+      "precision": 55.9,
+      "recall": 55.9,
+      "f1": 55.3
+    },
+    {
+      "experiment": "Combined",
+      "model": "SVM",
+      "accuracy": 56.7,
+      "precision": 57.2,
+      "recall": 56.7,
+      "f1": 48.1
+    },
+    {
+      "experiment": "Combined",
+      "model": "RandomForest",
+      "accuracy": 57.5,
+      "precision": 57.6,
+      "recall": 57.5,
+      "f1": 52.7
+    }
+  ],
+  "best_result": {
+    "experiment": "Raw EEG",
+    "model": "RandomForest",
+    "accuracy": 67.0
+  }
+}
